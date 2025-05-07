@@ -1,0 +1,96 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #000;
+  color: #d8b4fe;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 4rem;
+  margin-bottom: 30px;
+  color: #d8b4fe;
+}
+
+#locationButton {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background-color: #6b21a8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+#locationMenu {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+#locationMenu a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+#locationMenu a:hover {
+  background-color: #ddd;
+}
+
+.show {
+  display: block;
+}
+
+#clock {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32vw; 
+  font-weight: bold;
+  letter-spacing: 1vw;
+  width: 100vw;
+  color: #d8b4fe;
+  transition: color 0.3s ease;
+  margin: 20px 0;
+}
+
+.sun-info {
+  font-size: 1.9rem;
+  line-height: 3rem; 
+}
+
+#locationSelect {
+  margin-top: 20px; 
+  padding: 12px 22px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background-color: #6b21a8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  }
+
+  label[for="locationSelect"] {
+    font-size: 2.7rem;
+    color: #6b21a8;
+    margin-bottom: 8px; 
+    display: block;
+    }
