@@ -1,5 +1,15 @@
+/* Helvetica Neue Einbindung */
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('CSS/Helveticaneue.ttc') format('truetype-collection');
+  font-weight: 200;
+  font-style: normal;
+}
+
+/* Grundlayout */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Helvetica Neue';
+  font-weight: 200;
   background-color: #000;
   color: #d8b4fe;
   text-align: center;
@@ -8,37 +18,51 @@ body {
   overflow: auto;
 }
 
+html, body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Einheitlicher Button/Select-Stil */
+button,
+select {
+  font-size: 1.2vw;
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #6b21a8;
+  border: 2px solid #6b21a8;
+  border-radius: 2px;
+  cursor: pointer;
+  appearance: none;
+}
+
+/* Container-Zentraleinordnung */
 .container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 20px;
+  padding: 10px;
 }
 
+/* Überschrift */
 h1 {
-  font-size: 4rem;
+  font-size: 5vw;
+  font-weight: bold;
   margin-bottom: 30px;
   color: #d8b4fe;
 }
 
-#locationButton {
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  background-color: #6b21a8;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
+/* Dropdown-Menü */
 #locationMenu {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
   min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1;
   margin-top: 10px;
   border-radius: 5px;
@@ -59,133 +83,106 @@ h1 {
   display: block;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background-color: #000;
-  color: #d8b4fe;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  overflow: auto;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-}
-
-h1 {
-  font-size: 4rem;
-  margin-bottom: 30px;
-  color: #d8b4fe;
-}
-
-#locationButton {
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  background-color: #6b21a8;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
-#locationMenu {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-  z-index: 1;
-  margin-top: 10px;
-  border-radius: 5px;
-}
-
-#locationMenu a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-#locationMenu a:hover {
-  background-color: #ddd;
-}
-
-.show {
-  display: block;
-}
-
+/* Uhrzeit-Anzeige */
 #clock {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 32vw;
+  font-size: 25vw;
   font-weight: bold;
   letter-spacing: 1vw;
   width: 100vw;
-
   transition: color 0.3s ease;
   margin: 20px 0;
-
 }
 
 #clock span {
   -webkit-text-stroke: 2px #d8b4fe;
-  -webkit-background-clip: text!important;
-    color: transparent;
-    text-shadow: none;
-
+  -webkit-background-clip: text !important;
+  color: transparent;
+  text-shadow: none;
 }
 
+/* Sonnenaufgang/-untergang */
 .sun-info {
-  font-size: 1.9rem;
-  line-height: 3rem; 
+  font-size: 1.5vw;
+  line-height: 3vw;
 }
 
-
+/* Standort-Auswahl */
 #locationSelect {
-  margin-top: 20px; 
-  padding: 12px 22px;
-  font-size: 1.5rem;
+  font-size: 1.5vw;
+  font-family: 'Helvetica Neue';
+  font-weight: 200;
+  width: 25vw;
+  padding: 10px 20px;
+  color: #d8b4fe;
+  border: 2px solid #d8b4fe;
+  border-radius: 0px;
+  background-color: transparent;
+  margin: 20px;
   cursor: pointer;
-  background-color: #6b21a8;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  }
-
-  label[for="locationSelect"] {
-    font-size: 2.7rem;
-    color: #6b21a8;
-    margin-bottom: 8px; 
-    display: block;
-    }
-
-
-.sun-info {
-  font-size: 1.9rem;
-  line-height: 3rem; 
+  appearance: none;
 }
 
-#locationSelect {
-  margin-top: 20px; 
-  padding: 12px 22px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  background-color: #6b21a8;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  }
+label[for="locationSelect"] {
+  font-size: 2vw;
+  color: #6b21a8;
+  margin-bottom: 0px;
+  display: block;
+}
 
-  label[for="locationSelect"] {
-    font-size: 2.7rem;
-    color: #6b21a8;
-    margin-bottom: 8px; 
-    display: block;
-    }
+/* Footer-Bereich */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  z-index: 100;
+  padding: 12px 20px; /* Abstand zu den Bildschirmrändern */
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+}
+
+.footer-left label {
+  font-size: 3vw;
+  color: #d8b4fe;
+}
+
+.footer-right select.location-select {
+  font-size: 2.5vw;
+  padding: 10px 20px;
+  color: #d8b4fe;
+  border: 2px solid #d8b4fe;
+  border-radius: 2px;
+  background-color: transparent;
+  cursor: pointer;
+  appearance: none;
+  margin: 0;
+}
+
+.footer-right {
+  position: relative;
+}
+
+.footer-right::after {
+  content: '\2304';
+  position: absolute;
+  right: 30px;
+  top: 40%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #d8b4fe;
+  font-size: 2.5vw;
+}
+
+.footer-left label[for="locationSelect"] {
+  font-size: 2vw; 
+}

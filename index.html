@@ -9,19 +9,28 @@
 <body>
   <div class="container">
     <h1>Sonnenzeiten</h1>
-
-    <label for="locationSelect" class="location-label">Location wählen</label>
-    <select id="locationSelect">
-      <option value="" selected disabled>Bitte wählen...</option>
-    </select>
-
-    <div id="clock" class="clock">--:--</div>
-
     <div id="sun-info" class="sun-info">
       🌅 Sonnenaufgang: <span id="sunrise">--:-- Uhr</span><br />
       🌇 Sonnenuntergang: <span id="sunset">--:-- Uhr</span>
     </div>
+    <div id="clock" class="clock">--:--</div>
+
+    
   </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <label for="locationSelect">Location wählen</label>
+      </div>
+      <div class="footer-right">
+        <select id="locationSelect" class="location-select">
+          <option value="" selected disabled>Bitte wählen...</option>
+        </select>
+      </div>
+    </div>
+  </footer>
+
 
   <script src="script.js"></script>
 </body>

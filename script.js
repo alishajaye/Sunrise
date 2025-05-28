@@ -1,6 +1,7 @@
 let sunriseTime = null;
 let sunsetTime = null;
 let currentTime = null;
+let abortController = null;
 
 const locations = {
   "Berlin, Deutschland": { lat: 52.5200, lon: 13.4050, timezone: 'Europe/Berlin' },
@@ -15,8 +16,6 @@ const locations = {
 const locationSelect = document.getElementById('locationSelect');
 const clock = document.getElementById("clock");
 
-clock.style.background = `black`; 
-
 function populateLocationSelect() {
   const locationNames = Object.keys(locations).sort();
   locationNames.forEach(name => {
@@ -28,16 +27,15 @@ function populateLocationSelect() {
 }
 
 locationSelect.addEventListener('change', function () {
-  const selectedLocationName = locationSelect.value;
-  if (!locations[selectedLocationName]) return;
-  updateLocationDisplay(selectedLocationName, locations[selectedLocationName]);
+  const selected = locationSelect.value;
+  if (!locations[selected]) return;
+  updateLocationDisplay(selected, locations[selected]);
 });
 
 function updateLocationDisplay(name, coords) {
   document.getElementById("sunrise").textContent = "--:-- Uhr";
   document.getElementById("sunset").textContent = "--:-- Uhr";
-  updateSunTimes(coords.lat, coords.lon);
-  
+  updateSunTimes(coords.lat, coords.lon, coords.timezone);
   currentTime = getCurrentTime(coords.timezone);
   startClock(coords.timezone);
 }
@@ -50,21 +48,33 @@ function convertTo24HourFormat(timeStr) {
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
 
-async function updateSunTimes(lat, lon) {
+async function updateSunTimes(lat, lon, timezone) {
+  if (abortController) abortController.abort();
+  abortController = new AbortController();
+
   try {
-    const response = await fetch(`https://api.sunrisesunset.io/json?lat=${lat}&lng=${lon}&timezone=auto`);
+    const response = await fetch(
+      `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lon}&timezone=auto`,
+      { signal: abortController.signal }
+    );
     const data = await response.json();
     sunriseTime = convertTo24HourFormat(data.results.sunrise);
-    sunsetTime  = convertTo24HourFormat(data.results.sunset);
+    sunsetTime = convertTo24HourFormat(data.results.sunset);
     document.getElementById("sunrise").textContent = `${sunriseTime} Uhr`;
-    document.getElementById("sunset").textContent  = `${sunsetTime} Uhr`;
-    updateBackground();  
+    document.getElementById("sunset").textContent = `${sunsetTime} Uhr`;
+    currentTime = getCurrentTime(timezone);
+    console.log("API-Daten erhalten:", { sunriseTime, sunsetTime, currentTime });
+    updateBackground();
   } catch (error) {
-    console.error("Fehler beim Abrufen der Sonnenzeiten:", error);
+    if (error.name === "AbortError") {
+      console.log("API-Request abgebrochen");
+    } else {
+      console.error("API-Fehler:", error);
+    }
   }
 }
 
-function updateClock(timezone) {
+function getCurrentTime(timezone) {
   const now = new Date();
   const options = {
     hour: '2-digit',
@@ -72,12 +82,18 @@ function updateClock(timezone) {
     hour12: false,
     timeZone: timezone
   };
-  const timeString = new Intl.DateTimeFormat('de-DE', options).format(now);
-  
+  return new Intl.DateTimeFormat('de-DE', options).format(now);
+}
+
+function updateClock(timezone) {
+  const timeString = getCurrentTime(timezone);
   clock.innerHTML = timeString
     .split("")
     .map(char => `<span>${char}</span>`)
     .join("");
+  currentTime = timeString;
+  console.log("Uhrzeit aktualisiert:", currentTime);
+  updateBackground();
 }
 
 let clockInterval;
@@ -93,45 +109,52 @@ function convertToMinutes(timeStr) {
 }
 
 function calculateDayPercentage(sunriseTime, sunsetTime, currentTime) {
-  const sunriseMinutes = convertToMinutes(sunriseTime);
-  const sunsetMinutes = convertToMinutes(sunsetTime);
-  const currentMinutes = convertToMinutes(currentTime);
-  const middayMinutes = 720; 
-
+  const sunrise = convertToMinutes(sunriseTime);
+  const sunset = convertToMinutes(sunsetTime);
+  const current = convertToMinutes(currentTime);
+  const midday = 720;
   let percentage = 0;
 
-  if (currentMinutes >= sunriseMinutes && currentMinutes <= middayMinutes) {
-    percentage = ((currentMinutes - sunriseMinutes) / (middayMinutes - sunriseMinutes)) * 100;
-  } else if (currentMinutes > middayMinutes && currentMinutes <= sunsetMinutes) {
-    percentage = 100 - ((currentMinutes - middayMinutes) / (sunsetMinutes - middayMinutes)) * 100;
+  console.log("Tageslicht-Zeiten in Minuten:", { sunrise, midday, sunset, current });
+
+  if (current >= sunrise && current <= midday) {
+    percentage = ((current - sunrise) / (midday - sunrise)) * 100;
+  } else if (current > midday && current <= sunset) {
+    percentage = 100 - ((current - midday) / (sunset - midday)) * 100;
   }
 
   return percentage;
 }
 
 function updateBackground() {
-  if (sunriseTime && sunsetTime && currentTime) {
-    let percentage = calculateDayPercentage(sunriseTime, sunsetTime, currentTime);
-    
-    const spans = clock.querySelectorAll("span");
-    spans.forEach(span => {
-      span.style.background = `linear-gradient(0deg, rgba(216, 180, 254, 1) ${percentage-10}%, rgba(216, 180, 254, 0) ${percentage+10}%)`;
+  if (!sunriseTime || !sunsetTime || !currentTime) {
+    console.log("updateBackground(): Nicht genug Daten vorhanden", {
+      sunriseTime, sunsetTime, currentTime
     });
+    return;
   }
+
+  const percentage = calculateDayPercentage(sunriseTime, sunsetTime, currentTime);
+  console.log("Farbverlauf-Prozentsatz:", percentage);
+
+  const spans = clock.querySelectorAll("span");
+  spans.forEach(span => {
+    span.style.background = `linear-gradient(0deg, rgba(216,180,254,1) ${percentage - 10}%, rgba(216,180,254,0) ${percentage + 10}%)`;
+  });
 }
 
-function getCurrentTime(timezone) {
-  const now = new Date();
-  const options = {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: timezone
-  };
-  const timeString = new Intl.DateTimeFormat('de-DE', options).format(now);
-  return timeString;
-}
+// Unterdrücke Browser-Fehlermeldungen von Erweiterungen (optional)
+window.addEventListener("unhandledrejection", function (event) {
+  if (event.reason?.message?.includes("A listener indicated an asynchronous response")) {
+    event.preventDefault();
+  }
+});
 
 window.onload = function () {
   populateLocationSelect();
+
+  const selected = locationSelect.value;
+  if (locations[selected]) {
+    updateLocationDisplay(selected, locations[selected]);
+  }
 };
